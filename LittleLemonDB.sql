@@ -51,9 +51,9 @@ DROP TABLE IF EXISTS `customerdetails`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `customerdetails` (
   `CustomerId` int NOT NULL,
-  `CustomerName` varchar(45) NOT NULL,
+  `FullName` varchar(45) NOT NULL,
   `ContactNumber` int NOT NULL,
-  `ContactEmail` varchar(45) NOT NULL,
+  `Email` varchar(45) NOT NULL,
   PRIMARY KEY (`CustomerId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -99,11 +99,13 @@ DROP TABLE IF EXISTS `menu`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `menu` (
+  `MenuId` int NOT NULL,
   `MenuItemId` int NOT NULL,
-  `MenuItem` varchar(45) NOT NULL,
-  `Course` varchar(45) NOT NULL,
-  `Description` varchar(255) NOT NULL,
-  PRIMARY KEY (`MenuItemId`)
+  `MenuName` varchar(45) NOT NULL,
+  `Cuisine` varchar(45) NOT NULL,
+  PRIMARY KEY (`MenuId`),
+  KEY `MenuItemID_fk_idx` (`MenuItemId`),
+  CONSTRAINT `MenuItemID_fk` FOREIGN KEY (`MenuItemId`) REFERENCES `menuitems` (`MenuItemId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -117,6 +119,43 @@ LOCK TABLES `menu` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `menuitems`
+--
+
+DROP TABLE IF EXISTS `menuitems`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `menuitems` (
+  `MenuItemId` int NOT NULL,
+  `CourseName` varchar(45) DEFAULT NULL,
+  `StarterName` varchar(45) DEFAULT NULL,
+  `DessertName` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`MenuItemId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `menuitems`
+--
+
+LOCK TABLES `menuitems` WRITE;
+/*!40000 ALTER TABLE `menuitems` DISABLE KEYS */;
+/*!40000 ALTER TABLE `menuitems` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Temporary view structure for view `ordered_more_than_twice`
+--
+
+DROP TABLE IF EXISTS `ordered_more_than_twice`;
+/*!50001 DROP VIEW IF EXISTS `ordered_more_than_twice`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `ordered_more_than_twice` AS SELECT 
+ 1 AS `MenuName`*/;
+SET character_set_client = @saved_cs_client;
+
+--
 -- Table structure for table `orders`
 --
 
@@ -125,7 +164,7 @@ DROP TABLE IF EXISTS `orders`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `orders` (
   `OrderId` int NOT NULL,
-  `MenuItemId` int NOT NULL,
+  `MenuId` int NOT NULL,
   `OrderDate` date NOT NULL,
   `Quantity` int NOT NULL,
   `TotalCost` decimal(10,0) NOT NULL,
@@ -134,10 +173,10 @@ CREATE TABLE `orders` (
   PRIMARY KEY (`OrderId`),
   KEY `customerid_fk_idx` (`CustomerId`),
   KEY `deliveryid_fk_idx` (`DeliveryId`),
-  KEY `menuitemid_fk_idx` (`MenuItemId`),
+  KEY `menuitemid_fk_idx` (`MenuId`),
   CONSTRAINT `customeridFromOrders_fk` FOREIGN KEY (`CustomerId`) REFERENCES `customerdetails` (`CustomerId`),
   CONSTRAINT `deliveryid_fk` FOREIGN KEY (`DeliveryId`) REFERENCES `delivery` (`DeliveryId`),
-  CONSTRAINT `menuitemid_fk` FOREIGN KEY (`MenuItemId`) REFERENCES `menu` (`MenuItemId`)
+  CONSTRAINT `menuid_fk` FOREIGN KEY (`MenuId`) REFERENCES `menu` (`MenuId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -149,6 +188,38 @@ LOCK TABLES `orders` WRITE;
 /*!40000 ALTER TABLE `orders` DISABLE KEYS */;
 /*!40000 ALTER TABLE `orders` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Temporary view structure for view `orders_over150`
+--
+
+DROP TABLE IF EXISTS `orders_over150`;
+/*!50001 DROP VIEW IF EXISTS `orders_over150`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `orders_over150` AS SELECT 
+ 1 AS `CustomerId`,
+ 1 AS `FullName`,
+ 1 AS `OrderId`,
+ 1 AS `TotalCost`,
+ 1 AS `MenuName`,
+ 1 AS `CourseName`,
+ 1 AS `StarterName`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `ordersview`
+--
+
+DROP TABLE IF EXISTS `ordersview`;
+/*!50001 DROP VIEW IF EXISTS `ordersview`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `ordersview` AS SELECT 
+ 1 AS `OrderId`,
+ 1 AS `Quantity`,
+ 1 AS `TotalCost`*/;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Table structure for table `staff`
@@ -174,6 +245,106 @@ LOCK TABLES `staff` WRITE;
 /*!40000 ALTER TABLE `staff` DISABLE KEYS */;
 /*!40000 ALTER TABLE `staff` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Dumping routines for database 'littlelemondb'
+--
+/*!50003 DROP PROCEDURE IF EXISTS `cancel_order` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `cancel_order`(IN order_id INT)
+BEGIN
+DELETE FROM orders WHERE OrderId = order_id;
+SELECT CONCAT('Order ', order_id , 'is cancelled') AS Confirmation;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_max_quantity` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_max_quantity`()
+BEGIN
+SELECT Quantity AS MaxQuantityInOrder
+FROM orders
+ORDER BY Quantity DESC
+LIMIT 1;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+
+--
+-- Final view structure for view `ordered_more_than_twice`
+--
+
+/*!50001 DROP VIEW IF EXISTS `ordered_more_than_twice`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `ordered_more_than_twice` AS select `menu`.`MenuName` AS `MenuName` from `menu` where `menu`.`MenuId` in (select `orders`.`MenuId` from `orders` where (`orders`.`Quantity` > 2)) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `orders_over150`
+--
+
+/*!50001 DROP VIEW IF EXISTS `orders_over150`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `orders_over150` AS select `c`.`CustomerId` AS `CustomerId`,`c`.`FullName` AS `FullName`,`o`.`OrderId` AS `OrderId`,`o`.`TotalCost` AS `TotalCost`,`m`.`MenuName` AS `MenuName`,`mi`.`CourseName` AS `CourseName`,`mi`.`StarterName` AS `StarterName` from (((`customerdetails` `c` join `orders` `o` on((`c`.`CustomerId` = `o`.`CustomerId`))) join `menu` `m` on((`o`.`MenuId` = `m`.`MenuId`))) join `menuitems` `mi` on((`m`.`MenuItemId` = `mi`.`MenuItemId`))) where (`o`.`TotalCost` > 150) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `ordersview`
+--
+
+/*!50001 DROP VIEW IF EXISTS `ordersview`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `ordersview` AS select `orders`.`OrderId` AS `OrderId`,`orders`.`Quantity` AS `Quantity`,`orders`.`TotalCost` AS `TotalCost` from `orders` where (`orders`.`Quantity` > 2) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -184,4 +355,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-12-06 14:25:24
+-- Dump completed on 2023-12-06 21:29:05
