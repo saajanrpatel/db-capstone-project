@@ -39,6 +39,7 @@ CREATE TABLE `bookings` (
 
 LOCK TABLES `bookings` WRITE;
 /*!40000 ALTER TABLE `bookings` DISABLE KEYS */;
+INSERT INTO `bookings` VALUES (1,'2023-01-01',1,1),(2,'2023-02-01',2,2);
 /*!40000 ALTER TABLE `bookings` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -64,6 +65,7 @@ CREATE TABLE `customerdetails` (
 
 LOCK TABLES `customerdetails` WRITE;
 /*!40000 ALTER TABLE `customerdetails` DISABLE KEYS */;
+INSERT INTO `customerdetails` VALUES (1,'John Doe',1234567890,'john.doe@example.com'),(2,'Jane Smith',1176543210,'jane.smith@example.com');
 /*!40000 ALTER TABLE `customerdetails` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -88,6 +90,7 @@ CREATE TABLE `delivery` (
 
 LOCK TABLES `delivery` WRITE;
 /*!40000 ALTER TABLE `delivery` DISABLE KEYS */;
+INSERT INTO `delivery` VALUES (1,'2023-01-01','Finished'),(2,'2023-02-01','Finished');
 /*!40000 ALTER TABLE `delivery` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -115,6 +118,7 @@ CREATE TABLE `menu` (
 
 LOCK TABLES `menu` WRITE;
 /*!40000 ALTER TABLE `menu` DISABLE KEYS */;
+INSERT INTO `menu` VALUES (1,1,'Menu 1','Greek'),(2,2,'Menu 2','Italian');
 /*!40000 ALTER TABLE `menu` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -140,6 +144,7 @@ CREATE TABLE `menuitems` (
 
 LOCK TABLES `menuitems` WRITE;
 /*!40000 ALTER TABLE `menuitems` DISABLE KEYS */;
+INSERT INTO `menuitems` VALUES (1,'Greek Salad','Olives','Greek yogurt'),(2,'Bean Soup','Flatbread','Ice cream');
 /*!40000 ALTER TABLE `menuitems` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -186,6 +191,7 @@ CREATE TABLE `orders` (
 
 LOCK TABLES `orders` WRITE;
 /*!40000 ALTER TABLE `orders` DISABLE KEYS */;
+INSERT INTO `orders` VALUES (1,1,'2023-01-01',3,160,1,1),(2,2,'2023-02-01',1,35,2,2);
 /*!40000 ALTER TABLE `orders` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -355,4 +361,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-12-06 21:29:05
+-- Dump completed on 2023-12-06 22:09:17
